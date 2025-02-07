@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  ble_presence:
+    build: ./ble_presence_agent
+    container_name: ble_presence_agent
+    env_file: .env
+    network_mode: "host"
+    volumes:
+      - /var/run/dbus:/var/run/dbus:ro
+    ports:
+      - "5000:5000"
+
+  behavior:
+    build: ./behavior_agent
+    container_name: behavior_agent
+    env_file: .env
+    depends_on:
+      - ble_presence
+    ports:
+      - "5001:5001"
