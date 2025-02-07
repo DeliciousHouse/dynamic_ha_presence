@@ -1,20 +1,50 @@
-version: "3.8"
+---
 services:
-  ble_presence:
+  ble_presence_agent:
     build: ./ble_presence_agent
     container_name: ble_presence_agent
-    env_file: .env
-    network_mode: "host"
     volumes:
-      - /var/run/dbus:/var/run/dbus:ro
-    ports:
-      - "5000:5000"
+      - ./data:/app/data
+    env_file:
+      - ./.env
 
-  behavior:
+  behavior_agent:
     build: ./behavior_agent
     container_name: behavior_agent
-    env_file: .env
-    depends_on:
-      - ble_presence
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - ./.env
+
+  ai_agent:
+    build: ./ai_agent
+    container_name: ai_agent_container
+    restart: unless-stopped
+    privileged: false
+    security_opt:
+      - no-new-privileges:false
+    environment:
+      - HA_LONG_LIVED_ACCESS_TOKEN=${HA_LONG_LIVED_ACCESS_TOKEN}
+      - HOME_ASSISTANT_WS_URL=${HOME_ASSISTANT_WS_URL}
+      - HOME_ASSISTANT_WSS_URL=${HOME_ASSISTANT_WSS_URL}
+      - HOME_ASSISTANT_API_URL=${HOME_ASSISTANT_API_URL}
+      - HOME_ASSISTANT_CLOUD_API_URL=${HOME_ASSISTANT_CLOUD_API_URL}
+      - PGID=1000
+      - GUID=1000
+    volumes:
+      - /mnt/data/ai_agent_data:/app/data
+      - ./ai_agent:/app
+      - ./src/models:/app/src/models
+    networks:
+      - ai_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
     ports:
-      - "5001:5001"
+      - "8000:8000"
+
+networks:
+  ai_network:
+    driver: bridge

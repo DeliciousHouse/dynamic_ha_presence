@@ -27,3 +27,9 @@
 - Choice of AI model: rule-based vs machine learning.
 - Data storage method: local DB vs Home Assistant database.
 - Automation approval process: manual vs automatic.
+
+# TODO
+
+- [ ] Finalize BLE integration in ble_presence_agent.
+- [ ] Develop automation logic in behavior_agent.
+- [ ] Verify AI agent functionality and integrate further improvements.
