@@ -1,9 +1,13 @@
 ---
 services:
   ble_presence_agent:
-    build: ./ble_presence_agent
+    build:
+      context: ./ble_presence_agent
+      args:
+        USER_ID: "${UID}"
+        GROUP_ID: "${GID}"
     container_name: ble_presence_agent
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/app/data:rw
       - ./ble_presence_agent:/app
@@ -13,9 +17,13 @@ services:
       - ai_network
 
   behavior_agent:
-    build: ./behavior_agent
+    build:
+      context: ./behavior_agent
+      args:
+        USER_ID: "${UID}"
+        GROUP_ID: "${GID}"
     container_name: behavior_agent
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "${UID}:${GID}"
     volumes:
       - ./data:/app/data:rw
       - ./behavior_agent:/app
@@ -27,9 +35,13 @@ services:
       - ai_network
 
   ai_agent:
-    build: ./ai_agent
+    build:
+      context: ./ai_agent
+      args:
+        USER_ID: "${UID}"
+        GROUP_ID: "${GID}"
     container_name: ai_agent_container
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "${UID}:${GID}"
     restart: unless-stopped
     environment:
       - HA_LONG_LIVED_ACCESS_TOKEN=${HA_LONG_LIVED_ACCESS_TOKEN}
