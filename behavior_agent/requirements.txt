@@ -7,3 +7,4 @@ joblib
 python-dotenv
 pandas
 numpy
+apscheduler==3.10.1
